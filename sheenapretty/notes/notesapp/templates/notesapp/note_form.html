@@ -1,0 +1,29 @@
+{% extends 'notesapp/base.html' %}
+
+{% block title %}{% if mode == 'edit' %}Edit Note{% else %}New Note{% endif %} · Notes{% endblock %}
+
+{% block content %}
+  <div class="row" style="justify-content: space-between;">
+    <h1 style="margin: 0;">{% if mode == 'edit' %}Edit note{% else %}New note{% endif %}</h1>
+    {% if mode == 'edit' %}
+      <a class="btn btn-secondary" href="{% url 'note_detail' note.id %}">Back</a>
+    {% else %}
+      <a class="btn btn-secondary" href="{% url 'dashboard' %}">Back</a>
+    {% endif %}
+  </div>
+
+  <div class="card" style="margin-top: 14px;">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="row" style="margin-top: 10px;">
+        <button class="btn" type="submit">Save</button>
+        {% if mode == 'edit' %}
+          <a class="btn btn-secondary" href="{% url 'note_detail' note.id %}">Cancel</a>
+        {% else %}
+          <a class="btn btn-secondary" href="{% url 'dashboard' %}">Cancel</a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+{% endblock %}

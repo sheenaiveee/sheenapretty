@@ -1,0 +1,17 @@
+{% extends 'notesapp/base.html' %}
+
+{% block title %}New Course · Notes{% endblock %}
+
+{% block content %}
+  <h1>New course</h1>
+  <div class="card">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="row" style="margin-top: 10px;">
+        <button class="btn" type="submit">Create</button>
+        <a class="btn btn-secondary" href="{% url 'course_list' %}">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

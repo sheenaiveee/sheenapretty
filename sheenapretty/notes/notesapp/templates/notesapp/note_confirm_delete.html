@@ -1,0 +1,17 @@
+{% extends 'notesapp/base.html' %}
+
+{% block title %}Delete Note · Notes{% endblock %}
+
+{% block content %}
+  <h1>Delete note</h1>
+  <div class="card">
+    <p>Are you sure you want to delete <strong>{{ note.title }}</strong>?</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="row">
+        <button class="btn btn-danger" type="submit">Yes, delete</button>
+        <a class="btn btn-secondary" href="{% url 'note_detail' note.id %}">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

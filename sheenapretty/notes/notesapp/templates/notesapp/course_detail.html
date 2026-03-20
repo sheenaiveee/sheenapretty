@@ -1,0 +1,39 @@
+{% extends 'notesapp/base.html' %}
+
+{% block title %}{{ course.name }} · Notes{% endblock %}
+
+{% block content %}
+  <div class="row" style="justify-content: space-between;">
+    <div>
+      <h1 style="margin: 0;">{{ course.name }}</h1>
+      <div class="muted">Your notes for this course.</div>
+    </div>
+    <div class="actions">
+      <a class="btn" href="{% url 'note_create' %}?course={{ course.id }}">New note</a>
+      <a class="btn btn-secondary" href="{% url 'course_list' %}">All courses</a>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top: 14px;">
+    {% for note in notes %}
+      <div class="card">
+        <div class="row" style="justify-content: space-between;">
+          <div>
+            <div class="note-title">
+              <a class="link" href="{% url 'note_detail' note.id %}">{{ note.title }}</a>
+              {% if note.pinned %}<span class="tag">Pinned</span>{% endif %}
+            </div>
+            <div class="muted">Updated {{ note.updated_at|date:"M j, Y" }}</div>
+          </div>
+          <div class="actions">
+            <a class="btn btn-secondary" href="{% url 'note_edit' note.id %}">Edit</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="card">
+        <div class="muted">No notes yet. Create one to get started.</div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

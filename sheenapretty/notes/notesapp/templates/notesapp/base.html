@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Notes{% endblock %}</title>
+  <style>
+    :root {
+      --bg: #fff6bf;        /* soft yellow */
+      --card: #fff;
+      --text: #111;
+      --muted: #6b7280;
+      --border: #f3a6c8;    /* coquette pink */
+      --border-soft: #f6c6da;
+      --accent: #c2185b;    /* deeper pink */
+      --accent-strong: #111;
+      --danger: #b91c1c;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      background-image:
+        radial-gradient(rgba(194, 24, 91, 0.07) 1px, transparent 1px);
+      background-size: 18px 18px;
+    }
+
+    header { background: rgba(255, 255, 255, 0.92); border-bottom: 2px solid var(--border); backdrop-filter: blur(6px); }
+    .wrap { max-width: 1000px; margin: 0 auto; padding: 16px; }
+    .nav { display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+    .nav a { text-decoration: none; color: #111; }
+    .nav-left, .nav-right { display: flex; gap: 12px; align-items: center; }
+    .card { background: var(--card); border: 1px solid var(--border-soft); border-radius: 14px; padding: 14px; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 900px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+    .muted { color: var(--muted); font-size: 14px; }
+    .btn { display: inline-block; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--accent); color: white; text-decoration: none; }
+    .btn-secondary { background: white; color: var(--accent); }
+    .btn-danger { background: var(--danger); border-color: rgba(185, 28, 28, 0.35); }
+    form input[type="text"], form select, form textarea { width: 100%; padding: 10px; border: 1px solid rgba(194, 24, 91, 0.22); border-radius: 12px; box-sizing: border-box; }
+    form label { display: block; font-weight: 600; margin-top: 10px; margin-bottom: 6px; }
+    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .note-title { font-weight: 700; }
+    .note-meta { display: flex; gap: 10px; flex-wrap: wrap; }
+    .tag { display: inline-block; font-size: 12px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--border-soft); background: rgba(255, 246, 191, 0.55); }
+    .actions { display:flex; gap: 8px; flex-wrap: wrap; }
+    .link { color: var(--accent); text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <div class="nav-left">
+        <a href="{% url 'dashboard' %}"><strong>Student Notes</strong></a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'course_list' %}">Courses</a>
+          <a href="{% url 'note_create' %}">New note</a>
+        {% endif %}
+      </div>
+      <div class="nav-right">
+        {% if user.is_authenticated %}
+          <span class="muted">{{ user.username }}</span>
+          <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+            <button type="submit" class="btn btn-secondary">Logout</button>
+          </form>
+        {% else %}
+          <a class="btn btn-secondary" href="{% url 'signup' %}">Sign up</a>
+          <a class="btn" href="{% url 'login' %}">Login</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      {% if messages %}
+        <div class="grid">
+          {% for message in messages %}
+            <div class="card">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+</body>
+</html>

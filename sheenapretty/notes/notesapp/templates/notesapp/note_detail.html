@@ -1,0 +1,38 @@
+{% extends 'notesapp/base.html' %}
+
+{% block title %}{{ note.title }} · Notes{% endblock %}
+
+{% block content %}
+  <div class="row" style="justify-content: space-between;">
+    <div>
+      <h1 style="margin: 0;">{{ note.title }}</h1>
+      <div class="muted note-meta">
+        <span>Date {{ note.note_date|date:"M j, Y" }}</span>
+        <span>Updated {{ note.updated_at|date:"M j, Y" }}</span>
+        {% if note.course %}<span class="tag">{{ note.course.name }}</span>{% endif %}
+        {% if note.pinned %}<span class="tag">Pinned</span>{% endif %}
+      </div>
+    </div>
+    <div class="actions">
+      <a class="btn btn-secondary" href="{% url 'note_edit' note.id %}">Edit</a>
+      <form method="post" action="{% url 'note_toggle_pin' note.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{% url 'note_detail' note.id %}" />
+        <button class="btn btn-secondary" type="submit">{% if note.pinned %}Unpin{% else %}Pin{% endif %}</button>
+      </form>
+      <a class="btn btn-danger" href="{% url 'note_delete' note.id %}">Delete</a>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 14px; white-space: pre-wrap;">
+    {% if note.content %}
+      {{ note.content }}
+    {% else %}
+      <span class="muted">(Empty note)</span>
+    {% endif %}
+  </div>
+
+  <div style="margin-top: 12px;">
+    <a class="link" href="{% url 'dashboard' %}">Back to dashboard</a>
+  </div>
+{% endblock %}

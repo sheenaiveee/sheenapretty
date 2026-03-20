@@ -1,0 +1,146 @@
+{% extends 'notesapp/base.html' %}
+
+{% block title %}Dashboard · Notes{% endblock %}
+
+{% block content %}
+  <style>
+    .modal-overlay { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.35); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
+    .modal { max-width: 520px; width: 100%; }
+    .modal h3 { margin: 0 0 6px 0; }
+  </style>
+
+  <div id="motivationOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="motivationTitle">
+    <div class="card modal">
+      <h3 id="motivationTitle">Motivation</h3>
+      <div id="motivationText" class="muted"></div>
+      <div class="row" style="margin-top: 12px; justify-content: flex-end;">
+        <button id="motivationClose" class="btn btn-secondary" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" style="justify-content: space-between;">
+    <div>
+      <h1 style="margin: 0;">Dashboard</h1>
+      <div class="muted">Capture fast. Organize later. Find instantly.</div>
+    </div>
+    <div class="actions">
+      <a class="btn" href="{% url 'note_create' %}">New note</a>
+      <a class="btn btn-secondary" href="{% url 'course_create' %}">New course</a>
+    </div>
+  </div>
+
+  <div class="grid grid-2" style="margin-top: 14px;">
+    <div class="card">
+      <h2 style="margin-top: 0;">Pinned</h2>
+      {% if pinned_notes %}
+        <div class="grid">
+          {% for note in pinned_notes %}
+            <div>
+              <div class="note-title"><a class="link" href="{% url 'note_detail' note.id %}">{{ note.title }}</a></div>
+              <div class="muted note-meta">
+                <span>Date {{ note.note_date|date:"M j, Y" }}</span>
+                <span>Updated {{ note.updated_at|date:"M j, Y" }}</span>
+                {% if note.course %}<span class="tag">{{ note.course.name }}</span>{% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="muted">No pinned notes yet.</div>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top: 0;">Recent</h2>
+      {% if recent_notes %}
+        <div class="grid">
+          {% for note in recent_notes %}
+            <div>
+              <div class="note-title"><a class="link" href="{% url 'note_detail' note.id %}">{{ note.title }}</a></div>
+              <div class="muted note-meta">
+                <span>Date {{ note.note_date|date:"M j, Y" }}</span>
+                <span>Updated {{ note.updated_at|date:"M j, Y" }}</span>
+                {% if note.course %}<span class="tag">{{ note.course.name }}</span>{% endif %}
+                {% if note.pinned %}<span class="tag">Pinned</span>{% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="muted">Create your first note.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 12px;">
+    <h2 style="margin-top: 0;">Courses</h2>
+    {% if courses %}
+      <div class="row">
+        {% for course in courses %}
+          <a class="btn btn-secondary" href="{% url 'course_detail' course.id %}">{{ course.name }}</a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="muted">No courses yet — add one to start organizing.</div>
+    {% endif %}
+  </div>
+
+  <script>
+    (function () {
+      var messages = [
+        "One page at a time — you’ve got this.",
+        "Small steps daily beat last‑minute stress.",
+        "Write it now, perfect it later.",
+        "Future you will thank you for these notes.",
+        "Consistency is a superpower.",
+        "You don’t need more time — you need a start.",
+        "Progress over perfection.",
+        "Study like you believe in yourself.",
+        "Show up for 10 minutes — momentum will follow.",
+        "Your notes today are your confidence tomorrow.",
+        "Clarity comes from writing.",
+        "Do the next small thing.",
+        "Focus on understanding, not memorizing.",
+        "You’re closer than you think."
+      ];
+
+      function pickRandomDifferent(list, lastValue) {
+        if (!list || list.length === 0) return "";
+        if (list.length === 1) return list[0];
+
+        var candidate = lastValue;
+        var attempts = 0;
+        while (candidate === lastValue && attempts < 20) {
+          candidate = list[Math.floor(Math.random() * list.length)];
+          attempts += 1;
+        }
+        return candidate;
+      }
+
+      var overlay = document.getElementById('motivationOverlay');
+      var text = document.getElementById('motivationText');
+      var closeBtn = document.getElementById('motivationClose');
+
+      if (!overlay || !text || !closeBtn) return;
+
+      var storageKey = 'notesapp.lastMotivation';
+      var last = null;
+      try { last = window.localStorage.getItem(storageKey); } catch (e) { last = null; }
+
+      var chosen = pickRandomDifferent(messages, last);
+      text.textContent = chosen;
+      try { window.localStorage.setItem(storageKey, chosen); } catch (e) {}
+      overlay.style.display = 'flex';
+
+      function close() { overlay.style.display = 'none'; }
+      closeBtn.addEventListener('click', close);
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) close();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') close();
+      });
+    })();
+  </script>
+{% endblock %}

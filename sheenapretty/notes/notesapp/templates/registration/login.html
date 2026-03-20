@@ -1,0 +1,23 @@
+{% extends 'notesapp/base.html' %}
+
+{% block title %}Login · Notes{% endblock %}
+
+{% block content %}
+  <h1>Login</h1>
+  <div class="card">
+    {% if form.errors %}
+      <div class="muted">Your username and password didn’t match. Please try again.</div>
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="row" style="margin-top: 10px;">
+        <button class="btn" type="submit">Log in</button>
+      </div>
+    </form>
+    <div class="muted" style="margin-top: 10px;">
+      New here? <a class="link" href="{% url 'signup' %}">Create an account</a>.
+    </div>
+  </div>
+{% endblock %}

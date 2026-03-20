@@ -1,0 +1,17 @@
+{% extends 'notesapp/base.html' %}
+
+{% block title %}Sign Up · Notes{% endblock %}
+
+{% block content %}
+  <h1>Sign up</h1>
+  <div class="card">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="row" style="margin-top: 10px;">
+        <button class="btn" type="submit">Create account</button>
+        <a class="btn btn-secondary" href="{% url 'login' %}">Back to login</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}
